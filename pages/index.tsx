@@ -36,12 +36,12 @@ export default function Home() {
   };
 
   return (
-  <div className="min-h-screen bg-[#F4F9F1] text-slate-700 font-['Zen_Maru_Gothic'] flex flex-col justify-between antialiased">
-    <Head>
-      <title>推しサンショウウオ診断 🦎</title>
-      <meta name="description" content="きみはどのタイプ？ゆるかわサンショウウオの仲間たちに例える16タイプ診断" />
-      <link rel="icon" href="/favicon.ico" />
-    </Head>
+    <div className="min-h-screen bg-[#EBF7FC] text-slate-700 font-['Zen_Maru_Gothic'] flex flex-col justify-between antialiased">
+      <Head>
+        <title>推しサンショウウオ診断 🦎</title>
+        <meta name="description" content="きみはどのタイプ？ゆるかわサンショウウオの仲間たちに例える16タイプ診断" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
 
       {/* ヘッダー */}
       <header className="bg-white border-b-4 border-slate-700 py-4 px-6 flex justify-between items-center sticky top-0 z-50 shadow-sm">
@@ -51,7 +51,7 @@ export default function Home() {
         >
           <span className="text-2xl">🦎</span> 推しサンショウウオ診断
         </h1>
-        <span className="text-xs font-bold bg-[#E2EFDA] text-slate-700 border-2 border-slate-700 px-3 py-1 rounded-full shadow-[2px_2px_0px_0px_rgba(51,65,85,1)]">
+        <span className="text-xs font-bold bg-[#BCE6F8] text-slate-700 border-2 border-slate-700 px-3 py-1 rounded-full shadow-[2px_2px_0px_0px_rgba(51,65,85,1)]">
           16タイプしんだん
         </span>
       </header>
@@ -62,12 +62,9 @@ export default function Home() {
         {/* 1. スタート画面 */}
         {screen === 'START' && (
           <div className="bg-white border-4 border-slate-700 rounded-[2.5rem] shadow-[6px_6px_0px_0px_rgba(51,65,85,1)] p-8 sm:p-12 w-full text-center relative overflow-hidden">
-            {/* イラスト表示エリア（ここにあのアレを置きます） */}
-            <div className="w-48 h-48 bg-[#E2EFDA] rounded-full mx-auto mb-8 border-4 border-slate-700 flex items-center justify-center shadow-inner relative overflow-hidden group">
+            {/* イラスト表示エリア */}
+            <div className="w-48 h-48 bg-[#D6F0FC] rounded-full mx-auto mb-8 border-4 border-slate-700 flex items-center justify-center shadow-inner relative overflow-hidden group">
               <div className="text-7xl group-hover:scale-110 transition duration-300 select-none">🦎</div>
-              {/* 実際の画像を置く時は以下を有効化してください
-              <img src="/images/main-salamander.png" alt="サンショウウオ" className="w-40 h-40 object-contain" /> 
-              */}
             </div>
 
             <h2 className="text-2xl sm:text-3xl font-black text-slate-800 mb-4 tracking-tight leading-snug">
@@ -81,7 +78,7 @@ export default function Home() {
 
             <button
               onClick={handleStart}
-              className="w-full sm:w-auto bg-[#FFD3B6] hover:bg-[#ffc299] active:bg-[#f2b085] text-slate-800 font-black text-lg px-12 py-4 rounded-2xl border-4 border-slate-700 shadow-[4px_4px_0px_0px_rgba(51,65,85,1)] transition-all duration-100 hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[3px_3px_0px_0px_rgba(51,65,85,1)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[1px_1px_0px_0px_rgba(51,65,85,1)]"
+              className="w-full sm:w-auto bg-[#99DCFA] hover:bg-[#BCE6F8] active:bg-[#72cdfa] text-slate-800 font-black text-lg px-12 py-4 rounded-2xl border-4 border-slate-700 shadow-[4px_4px_0px_0px_rgba(51,65,85,1)] transition-all duration-100 hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[3px_3px_0px_0px_rgba(51,65,85,1)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[1px_1px_0px_0px_rgba(51,65,85,1)]"
             >
               しんだんをはじめる ➔
             </button>
@@ -94,12 +91,12 @@ export default function Home() {
             {/* プログレスバー */}
             <div className="mb-8">
               <div className="flex justify-between text-xs font-bold text-slate-400 mb-2">
-                <span className="text-slate-600 bg-[#E2EFDA] border-2 border-slate-700 px-2 py-0.5 rounded-lg">しつもん {currentQuestionIndex + 1} / {QUESTIONS.length}</span>
+                <span className="text-slate-600 bg-[#BCE6F8] border-2 border-slate-700 px-2 py-0.5 rounded-lg">しつもん {currentQuestionIndex + 1} / {QUESTIONS.length}</span>
                 <span className="font-mono">{Math.round(((currentQuestionIndex) / QUESTIONS.length) * 100)}%</span>
               </div>
               <div className="w-full bg-slate-100 h-4 rounded-full border-2 border-slate-700 p-0.5 overflow-hidden">
                 <div 
-                  className="bg-[#A8E6CF] h-full rounded-full border-r-2 border-slate-700 transition-all duration-200"
+                  className="bg-[#99DCFA] h-full rounded-full border-r-2 border-slate-700 transition-all duration-200"
                   style={{ width: `${((currentQuestionIndex + 1) / QUESTIONS.length) * 100}%` }}
                 />
               </div>
@@ -112,16 +109,16 @@ export default function Home() {
               </h3>
             </div>
 
-            {/* 選択選択肢ボタン */}
+            {/* 選択肢ボタン */}
             <div className="space-y-4">
               {QUESTIONS[currentQuestionIndex].options.map((option, index) => (
                 <button
                   key={index}
                   onClick={() => handleAnswer(option.type)}
-                  className="w-full text-left bg-white hover:bg-[#FFF2F2] border-4 border-slate-700 rounded-2xl p-5 font-bold transition-all duration-100 shadow-[3px_3px_0px_0px_rgba(51,65,85,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(51,65,85,1)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[0px_0px_0px_0px_rgba(51,65,85,1)] group"
+                  className="w-full text-left bg-white hover:bg-[#EBF7FC] border-4 border-slate-700 rounded-2xl p-5 font-bold transition-all duration-100 shadow-[3px_3px_0px_0px_rgba(51,65,85,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(51,65,85,1)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[0px_0px_0px_0px_rgba(51,65,85,1)] group"
                 >
                   <div className="flex items-center">
-                    <span className="bg-[#F4F9F1] group-hover:bg-[#FFD3B6] border-2 border-slate-700 text-slate-700 rounded-xl w-7 h-7 flex items-center justify-center text-xs font-black mr-4 shrink-0 transition-colors">
+                    <span className="bg-[#F4F9F1] group-hover:bg-[#99DCFA] border-2 border-slate-700 text-slate-700 rounded-xl w-7 h-7 flex items-center justify-center text-xs font-black mr-4 shrink-0 transition-colors">
                       {index === 0 ? 'A' : 'B'}
                     </span>
                     <span className="text-slate-700 leading-relaxed text-sm sm:text-base">{option.text}</span>
@@ -157,8 +154,7 @@ export default function Home() {
             </div>
 
             {/* キャラクターイラスト表示用の額縁風カード */}
-            <div className="bg-[#EAEFF5] border-4 border-slate-700 rounded-2xl p-6 text-center mb-6 shadow-inner flex flex-col items-center justify-center min-h-[180px]">
-              {/* 💡 イラスト画像がある場合はここにImageタグを置きます */}
+            <div className="bg-[#D6F0FC] border-4 border-slate-700 rounded-2xl p-6 text-center mb-6 shadow-inner flex flex-col items-center justify-center min-h-[180px]">
               <div className="text-5xl mb-2 animate-pulse select-none">🎨</div>
               <p className="font-black text-slate-600 text-xs sm:text-sm">ここに手書きイラストを表示！</p>
               <span className="text-[10px] font-mono text-slate-400 bg-white border border-slate-300 px-2 py-0.5 rounded mt-2">
@@ -182,7 +178,7 @@ export default function Home() {
             </div>
 
             {/* 生態・とくちょう */}
-            <div className="mb-8 bg-[#E2EFDA]/50 rounded-2xl p-5 border-2 border-slate-700 shadow-[2px_2px_0px_0px_rgba(51,65,85,1)]">
+            <div className="mb-8 bg-[#BCE6F8]/40 rounded-2xl p-5 border-2 border-slate-700 shadow-[2px_2px_0px_0px_rgba(51,65,85,1)]">
               <h4 className="text-xs font-black text-slate-700 uppercase tracking-widest mb-3 flex items-center gap-1">
                 <span>🍃</span> 生態としんくろ要素
               </h4>
@@ -200,7 +196,7 @@ export default function Home() {
             <div className="pt-2">
               <button
                 onClick={handleRestart}
-                className="w-full bg-[#E2EFDA] hover:bg-[#d2e4c9] text-slate-800 font-black py-3.5 px-6 rounded-xl border-4 border-slate-700 shadow-[3px_3px_0px_0px_rgba(51,65,85,1)] transition-all duration-100 hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(51,65,85,1)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[0px_0px_0px_0px_rgba(51,65,85,1)] text-center text-sm"
+                className="w-full bg-[#BCE6F8] hover:bg-[#99DCFA] text-slate-800 font-black py-3.5 px-6 rounded-xl border-4 border-slate-700 shadow-[3px_3px_0px_0px_rgba(51,65,85,1)] transition-all duration-100 hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(51,65,85,1)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[0px_0px_0px_0px_rgba(51,65,85,1)] text-center text-sm"
               >
                 もういちど診断する
               </button>
