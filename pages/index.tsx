@@ -27,20 +27,38 @@ export default function Home() {
     setResult(null);
   };
 
-  const handleShareX = () => {
+  const [isCopied, setIsCopied] = useState(false);
+
+const handleShareGeneral = async () => {
   if (!result) return;
-  
-  // シェアするテキスト（キャッチコピーや診断名を盛り込むとクリックされやすくなります）
-  const text = `【推しサンショウウオ診断】\n私のタイプは…【${result.name}】でした！\n「${result.catchphrase}」\n\nきみも自分のタイプを診断してみよう！🦎✨\n`;
-  
-  // アプリのURL（公開したあとのURLに変えてください。ローカル環境なら http://localhost:3000）
-  const url = 'https://your-app-url.com'; 
-  
-  // X（Twitter）のシェアインテントURLを生成
-  const shareUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
-  
-  // 新しいタブでシェア画面を開く
-  window.open(shareUrl, '_blank', 'noreferrer');
+
+  const title = '推しサンショウウオ診断 🦎';
+  const text = `【推しサンショウウオ診断】\n私のタイプは…【${result.name}】でした！\n「${result.catchphrase}」\n\nきみも自分のタイプを診断してみよう！✨\n`;
+  const url = window.location.origin; // 今のサイトのURLを自動取得
+
+  // 1. スマホなどの標準シェア機能が使える場合（Web Share API）
+  if (navigator.share) {
+    try {
+      await navigator.share({
+        title: title,
+        text: text,
+        url: url,
+      });
+    } catch (error) {
+      console.log('シェアがキャンセルされました', error);
+    }
+  } 
+  // 2. パソコンなど、標準シェア機能がない場合はクリップボードにコピー
+  else {
+    try {
+      await navigator.clipboard.writeText(`${text}${url}`);
+      setIsCopied(true);
+      // 3秒後に「コピーしました」の表示を消す
+      setTimeout(() => setIsCopied(false), 3000);
+    } catch (err) {
+      alert('コピーに失敗しました。URLを直接コピーしてください。');
+    }
+  }
 };
 
   const handleAnswer = (type: 'E' | 'I' | 'S' | 'N' | 'T' | 'F' | 'J' | 'P') => {
@@ -226,13 +244,13 @@ export default function Home() {
               </ul>
             </div>
 
-            {/* ★ここにシェアボタンを追加★ */}
-            <div className="mb-4">
+            {/* ★シェアボタン★ */}
+            <div className="mb-4 relative">
               <button
-                onClick={handleShareX}
-                className="w-full bg-sky-600 hover:bg-sky-800 text-white font-black py-3.5 px-6 rounded-xl border-4 border-slate-700 shadow-[3px_3px_0px_0px_rgba(51,65,85,1)] transition-all duration-100 hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(51,65,85,1)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[0px_0px_0px_0px_rgba(51,65,85,1)] text-center text-sm flex items-center justify-center gap-2"
+                onClick={handleShareGeneral}
+                className="w-full bg-sky-700 hover:bg-sky-800 text-white font-black py-3.5 px-6 rounded-xl border-4 border-slate-700 shadow-[3px_3px_0px_0px_rgba(51,65,85,1)] transition-all duration-100 hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(51,65,85,1)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[0px_0px_0px_0px_rgba(51,65,85,1)] text-center text-sm flex items-center justify-center gap-2"
               >
-                <span>𝕏</span> 結果をシェアする
+                <span>📢</span> 結果をシェアする
               </button>
             </div>
 
