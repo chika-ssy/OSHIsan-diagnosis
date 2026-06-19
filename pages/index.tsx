@@ -198,7 +198,7 @@ const handleShareGeneral = async () => {
             <div className="bg-[#D6F0FC] border-4 border-slate-700 rounded-2xl p-4 text-center mb-6 shadow-inner flex flex-col items-center justify-center min-h-[220px] relative overflow-hidden group">
               {!imageError ? (
                 <img 
-                  src={`/images/salamanders/${result.mbti.toLowerCase()}.png`} 
+                  src={`images/salamanders/${result.mbti.toLowerCase()}.png`} 
                   alt={result.name} 
                   className="w-100 h-100 object-contain group-hover:scale-105 transition duration-300 drop-shadow-[0_4px_6px_rgba(0,0,0,0.05)]"
                   onError={() => setImageError(true)} // React流のエラーハンドリングに最適化
