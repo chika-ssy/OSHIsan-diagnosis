@@ -166,7 +166,7 @@ export default function Home() {
                 <img 
                   src={`/images/salamanders/${result.mbti.toLowerCase()}.png`} 
                   alt={result.name} 
-                  className="w-44 h-44 object-contain group-hover:scale-105 transition duration-300 drop-shadow-[0_4px_6px_rgba(0,0,0,0.05)]"
+                  className="w-100 h-100 object-contain group-hover:scale-105 transition duration-300 drop-shadow-[0_4px_6px_rgba(0,0,0,0.05)]"
                   onError={() => setImageError(true)} // React流のエラーハンドリングに最適化
                 />
               ) : (
