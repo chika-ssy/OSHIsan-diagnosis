@@ -214,7 +214,7 @@ const handleShareGeneral = async () => {
               )}
             </div>
 
-            {/* 基本のせいかく */}
+            {/* 基本の性格 */}
             <div className="mb-6">
               <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2.5">◆ 基本のせいかく</h4>
               <div className="flex flex-wrap gap-2">
