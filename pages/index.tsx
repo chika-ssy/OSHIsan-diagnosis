@@ -195,20 +195,20 @@ const handleShareGeneral = async () => {
             </div>
 
             {/* キャラクターイラスト表示エリアの最適化 */}
-            <div className="bg-[#D6F0FC] border-4 border-slate-700 rounded-2xl p-4 text-center mb-6 shadow-inner flex flex-col items-center justify-center min-h-[220px] relative overflow-hidden group">
+            <div className="bg-[#D6F0FC] border-4 border-slate-700 rounded-2xl p-6 text-center mb-6 shadow-inner flex flex-col items-center justify-center min-h-[300px] relative overflow-hidden group">
               {!imageError ? (
                 <img 
-                  src={`images/salamanders/${result.mbti.toLowerCase()}.png`} 
+                  src={`images/salamanders/${result.mbti.toLowerCase()}.png`} // 先頭の / を削除して相対パスに
                   alt={result.name} 
                   className="w-100 h-100 object-contain group-hover:scale-105 transition duration-300 drop-shadow-[0_4px_6px_rgba(0,0,0,0.05)]"
-                  onError={() => setImageError(true)} // React流のエラーハンドリングに最適化
+                  onError={() => setImageError(true)}
                 />
               ) : (
                 <div className="flex flex-col items-center justify-center">
-                  <div className="text-5xl mb-2 animate-pulse select-none">🎨</div>
-                  <p className="font-black text-slate-600 text-xs sm:text-sm">イラスト準備中…</p>
+                  <div className="text-6xl mb-3 animate-pulse select-none">🎨</div>
+                  <p className="font-black text-slate-600 text-sm">イラスト準備中…</p>
                   <span className="text-[10px] font-mono text-slate-400 bg-white border border-slate-300 px-2 py-0.5 rounded mt-2">
-                    /images/salamanders/{result.mbti.toLowerCase()}.png
+                    images/salamanders/{result.mbti.toLowerCase()}.png
                   </span>
                 </div>
               )}
