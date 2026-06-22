@@ -126,10 +126,13 @@ const handleShareGeneral = async () => {
             >
               診断を始める ➔
             </button>
-            
+
             {/* 性格一覧ボタン */}
             <div className="mt-4 text-center">
-              <Link href="/types" className="text-xs font-black text-slate-500 hover:text-slate-800 underline decoration-2 underline-offset-4">
+              <Link 
+                href={`/types?from=${result?.mbti?.toLowerCase() || ''}`} // 例: /types?from=infj になる
+                className="text-xs font-black text-slate-500 hover:text-slate-800 underline decoration-2 underline-offset-4"
+              >
                 🔍 サンショウウオの性格一覧を見る
               </Link>
             </div>

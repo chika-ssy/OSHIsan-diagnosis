@@ -1,12 +1,27 @@
 import React from 'react';
 import Link from 'next/link';
-import Image from 'next/image';
-// ★ここを修正：public/data フォルダを指す正しい相対パスに指定します
-import salamanderData from '../public/data/salamanders.json'; 
+import { useRouter } from 'next/router'; // ★ インポートを追加
+import salamanderData from '../public/data/salamanders.json';
 
 export default function TypesPage() {
-  // オブジェクト形式のJSONから、各キャラクターの配列（16個の配列）を作成します
+  const router = useRouter();
+  
+  // URLの「?from=xxx」の部分をNext.jsの機能で自動取得します
+  const { from } = router.query; 
+
   const allCharacters = salamanderData ? Object.values(salamanderData) : [];
+
+  // ★ 戻るボタンを押したときの処理
+  const handleBack = () => {
+    if (from) {
+      // 💡 URLにタイプを乗せてトップページに戻る
+      // トップページ側（index.tsx）が、URLにmbtiがあるときに結果画面を開くロジックに対応している場合
+      router.push(`/?mbti=${from}`);
+    } else {
+      // 普通にトップから来た場合は普通にトップへ戻す
+      router.push('/');
+    }
+  };
 
   return (
     <div className="min-h-screen bg-[#EBF7FC] text-slate-800 p-6 font-sans selection:bg-[#99DCFA]">
@@ -22,7 +37,7 @@ export default function TypesPage() {
           </p>
         </div>
 
-        {/* グリッドレイアウト（スマホ1列、タブレット2列、PC3列） */}
+        {/* グリッドレイアウト */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-12">
           {allCharacters.map((char: any) => (
             <div 
@@ -31,12 +46,10 @@ export default function TypesPage() {
             >
               {/* イラストエリア */}
               <div className="w-40 h-40 bg-[#D6F0FC] border-4 border-slate-700 rounded-xl overflow-hidden mb-4 relative flex items-center justify-center shadow-inner">
-                <Image 
+                <img 
                   src={`/images/salamanders/${char.mbti.toLowerCase()}.png`}
                   alt={char.name}
-                  width={140}
-                  height={140}
-                  className="object-contain group-hover:scale-105 transition duration-300"
+                  className="w-32 h-32 object-contain group-hover:scale-105 transition duration-300"
                 />
               </div>
 
@@ -66,11 +79,18 @@ export default function TypesPage() {
           ))}
         </div>
 
-        {/* 戻るボタン */}
-        <div className="text-center">
+        {/* 戻るボタンエリア */}
+        <div className="text-center space-x-4">
+          <button 
+            onClick={handleBack} // ★書き換えた関数を呼び出す
+            className="bg-white hover:bg-slate-50 text-slate-800 font-black py-3 px-8 rounded-xl border-4 border-slate-700 shadow-[3px_3px_0px_0px_rgba(51,65,85,1)] transition-all duration-100 active:translate-x-[3px] active:translate-y-[3px] active:shadow-[0px_0px_0px_0px_rgba(51,65,85,1)] text-sm"
+          >
+            {from ? '⬅️ 診断結果に戻る' : '⬅️ 前のページに戻る'}
+          </button>
+
           <Link href="/">
             <button className="bg-slate-800 hover:bg-slate-900 text-white font-black py-3 px-8 rounded-xl border-4 border-slate-700 shadow-[3px_3px_0px_0px_rgba(51,65,85,1)] transition-all duration-100 active:translate-x-[3px] active:translate-y-[3px] active:shadow-[0px_0px_0px_0px_rgba(51,65,85,1)] text-sm">
-              🏠 トップページに戻る
+              🏠 トップに戻る
             </button>
           </Link>
         </div>
