@@ -30,6 +30,29 @@ export default function Home() {
 
   const [isCopied, setIsCopied] = useState(false);
 
+// pages/index.tsx 内に追加
+
+// 💡 URLの「?mbti=xxx」を監視して、直接結果画面を開く処理
+useEffect(() => {
+  // ブラウザ環境（window）のURLパラメータを取得
+  const params = new URLSearchParams(window.location.search);
+  const mbtiParam = params.get('mbti');
+
+  if (mbtiParam) {
+    // 計算ロジック（calculateResult）にMBTI文字列の各文字を配列にして渡すことで結果を擬似再現します
+    const mbtiLetters = mbtiParam.toUpperCase().split('') as any;
+    try {
+      const restoredResult = calculateResult(mbtiLetters);
+      if (restoredResult) {
+        setResult(restoredResult);
+        setScreen('RESULT');
+      }
+    } catch (e) {
+      console.error("結果の復元に失敗しました", e);
+    }
+  }
+}, []);
+
 const handleShareGeneral = async () => {
   if (!result) return;
 
@@ -130,7 +153,7 @@ const handleShareGeneral = async () => {
             {/* 性格一覧ボタン */}
             <div className="mt-4 text-center">
               <Link 
-                href={`/types?from=${result?.mbti?.toLowerCase() || ''}`} // 例: /types?from=infj になる
+                href={`/types?from=${result?.mbti?.toLowerCase() || ''}`} 
                 className="text-xs font-black text-slate-500 hover:text-slate-800 underline decoration-2 underline-offset-4"
               >
                 🔍 サンショウウオの性格一覧を見る
