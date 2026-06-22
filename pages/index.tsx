@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { QUESTIONS, calculateResult, Salamander } from '../utils/diagnosis';
+import Link from 'next/link';
 
 type ScreenState = 'START' | 'QUESTION' | 'RESULT';
 
@@ -125,6 +126,13 @@ const handleShareGeneral = async () => {
             >
               診断を始める ➔
             </button>
+            
+            {/* 性格一覧ボタン */}
+            <div className="mt-4 text-center">
+              <Link href="/types" className="text-xs font-black text-slate-500 hover:text-slate-800 underline decoration-2 underline-offset-4">
+                🔍 サンショウウオの性格一覧を見る
+              </Link>
+            </div>
           </div>
         )}
 
@@ -134,7 +142,7 @@ const handleShareGeneral = async () => {
             {/* プログレスバー */}
             <div className="mb-8">
               <div className="flex justify-between text-xs font-bold text-slate-400 mb-2">
-                <span className="text-slate-600 bg-[#BCE6F8] border-2 border-slate-700 px-2 py-0.5 rounded-lg">しつもん {currentQuestionIndex + 1} / {QUESTIONS.length}</span>
+                <span className="text-slate-600 bg-[#BCE6F8] border-2 border-slate-700 px-2 py-0.5 rounded-lg">質問 {currentQuestionIndex + 1} / {QUESTIONS.length}</span>
                 <span className="font-mono">{Math.round(((currentQuestionIndex) / QUESTIONS.length) * 100)}%</span>
               </div>
               <div className="w-full bg-slate-100 h-4 rounded-full border-2 border-slate-700 p-0.5 overflow-hidden">
@@ -262,6 +270,12 @@ const handleShareGeneral = async () => {
               >
                 もういちど診断する
               </button>
+            </div>
+            {/* 性格一覧ボタン */}
+            <div className="mt-4 text-center">
+              <Link href="/types" className="text-xs font-black text-slate-500 hover:text-slate-800 underline decoration-2 underline-offset-4">
+                🔍 サンショウウオの性格一覧を見る
+              </Link>
             </div>
           </div>
         )}
