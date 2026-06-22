@@ -34,13 +34,12 @@ export default function Home() {
 
 // 💡 URLの「?mbti=xxx」を監視して、直接結果画面を開く処理
 useEffect(() => {
-  // ブラウザ環境（window）のURLパラメータを取得
   const params = new URLSearchParams(window.location.search);
   const mbtiParam = params.get('mbti');
 
   if (mbtiParam) {
-    // 計算ロジック（calculateResult）にMBTI文字列の各文字を配列にして渡すことで結果を擬似再現します
-    const mbtiLetters = mbtiParam.toUpperCase().split('') as any;
+    // 固い型定義をしてanyエラーを回避します
+    const mbtiLetters = mbtiParam.toUpperCase().split('') as ('E' | 'I' | 'S' | 'N' | 'T' | 'F' | 'J' | 'P')[];
     try {
       const restoredResult = calculateResult(mbtiLetters);
       if (restoredResult) {

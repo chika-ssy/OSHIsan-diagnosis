@@ -1,24 +1,30 @@
 import React from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/router'; // ★ インポートを追加
+import { useRouter } from 'next/router'; 
 import salamanderData from '../public/data/salamanders.json';
+
+// 💡 ESLintエラーを回避するためにサンショウウオデータの型を定義
+interface SalamanderCharacter {
+  name: string;
+  features: string[];
+  mbti: string;
+  personality: string[];
+  catchphrase: string;
+}
 
 export default function TypesPage() {
   const router = useRouter();
-  
-  // URLの「?from=xxx」の部分をNext.jsの機能で自動取得します
   const { from } = router.query; 
 
-  const allCharacters = salamanderData ? Object.values(salamanderData) : [];
+  // キャストして型を厳格に定義します
+  const allCharacters = salamanderData 
+    ? (Object.values(salamanderData) as SalamanderCharacter[]) 
+    : [];
 
-  // ★ 戻るボタンを押したときの処理
   const handleBack = () => {
     if (from) {
-      // 💡 URLにタイプを乗せてトップページに戻る
-      // トップページ側（index.tsx）が、URLにmbtiがあるときに結果画面を開くロジックに対応している場合
       router.push(`/?mbti=${from}`);
     } else {
-      // 普通にトップから来た場合は普通にトップへ戻す
       router.push('/');
     }
   };
@@ -39,7 +45,7 @@ export default function TypesPage() {
 
         {/* グリッドレイアウト */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 mb-12">
-          {allCharacters.map((char: any) => (
+          {allCharacters.map((char) => ( // 💡 : any を削除して安全にループ
             <div 
               key={char.mbti}
               className="bg-white border-4 border-slate-700 rounded-2xl p-5 shadow-[4px_4px_0px_0px_rgba(51,65,85,1)] flex flex-col items-center group transition-all duration-200 hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(51,65,85,1)]"
@@ -82,7 +88,7 @@ export default function TypesPage() {
         {/* 戻るボタンエリア */}
         <div className="text-center space-x-4">
           <button 
-            onClick={handleBack} // ★書き換えた関数を呼び出す
+            onClick={handleBack}
             className="bg-white hover:bg-slate-50 text-slate-800 font-black py-3 px-8 rounded-xl border-4 border-slate-700 shadow-[3px_3px_0px_0px_rgba(51,65,85,1)] transition-all duration-100 active:translate-x-[3px] active:translate-y-[3px] active:shadow-[0px_0px_0px_0px_rgba(51,65,85,1)] text-sm"
           >
             {from ? '⬅️ 診断結果に戻る' : '⬅️ 前のページに戻る'}
