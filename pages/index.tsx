@@ -1,88 +1,22 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import Head from 'next/head';
-import { QUESTIONS, calculateResult, Salamander } from '../utils/diagnosis';
+import { QUESTIONS, calculateResult } from '../utils/diagnosis';
 import Link from 'next/link';
+import { useRouter } from 'next/router'; // ★ ページ遷移のために追加
 
-type ScreenState = 'START' | 'QUESTION' | 'RESULT';
+type ScreenState = 'START' | 'QUESTION'; // ★ 'RESULT' を削除
 
 export default function Home() {
+  const router = useRouter(); // ★ ルーターの初期化
   const [screen, setScreen] = useState<ScreenState>('START');
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState<number>(0);
   const [userAnswers, setUserAnswers] = useState<('E' | 'I' | 'S' | 'N' | 'T' | 'F' | 'J' | 'P')[]>([]);
-  const [result, setResult] = useState<Salamander | null>(null);
-  
-  // 画像の読み込みエラーを状態として管理（最適化）
-  const [imageError, setImageError] = useState<boolean>(false);
-
-  // 画面が切り替わるときに画像エラーの状態をリセット
-  useEffect(() => {
-    if (screen === 'RESULT') {
-      setImageError(false);
-    }
-  }, [screen]);
 
   const handleStart = () => {
     setScreen('QUESTION');
     setCurrentQuestionIndex(0);
     setUserAnswers([]);
-    setResult(null);
   };
-
-  const [isCopied, setIsCopied] = useState(false);
-
-// pages/index.tsx 内に追加
-
-// 💡 URLの「?mbti=xxx」を監視して、直接結果画面を開く処理
-useEffect(() => {
-  const params = new URLSearchParams(window.location.search);
-  const mbtiParam = params.get('mbti');
-
-  if (mbtiParam) {
-    // 固い型定義をしてanyエラーを回避します
-    const mbtiLetters = mbtiParam.toUpperCase().split('') as ('E' | 'I' | 'S' | 'N' | 'T' | 'F' | 'J' | 'P')[];
-    try {
-      const restoredResult = calculateResult(mbtiLetters);
-      if (restoredResult) {
-        setResult(restoredResult);
-        setScreen('RESULT');
-      }
-    } catch (e) {
-      console.error("結果の復元に失敗しました", e);
-    }
-  }
-}, []);
-
-const handleShareGeneral = async () => {
-  if (!result) return;
-
-  const title = '推しサンショウウオ診断 🦎';
-  const text = `【推しサンショウウオ診断】\n私のタイプは…【${result.name}】でした！\n「${result.catchphrase}」\n\nきみも自分のタイプを診断してみよう！✨\n`;
-  const url = window.location.origin; // 今のサイトのURLを自動取得
-
-  // 1. スマホなどの標準シェア機能が使える場合（Web Share API）
-  if (navigator.share) {
-    try {
-      await navigator.share({
-        title: title,
-        text: text,
-        url: url,
-      });
-    } catch (error) {
-      console.log('シェアがキャンセルされました', error);
-    }
-  } 
-  // 2. パソコンなど、標準シェア機能がない場合はクリップボードにコピー
-  else {
-    try {
-      await navigator.clipboard.writeText(`${text}${url}`);
-      setIsCopied(true);
-      // 3秒後に「コピーしました」の表示を消す
-      setTimeout(() => setIsCopied(false), 3000);
-    } catch (err) {
-      alert('コピーに失敗しました。URLを直接コピーしてください。');
-    }
-  }
-};
 
   const handleAnswer = (type: 'E' | 'I' | 'S' | 'N' | 'T' | 'F' | 'J' | 'P') => {
     const updatedAnswers = [...userAnswers, type];
@@ -92,9 +26,12 @@ const handleShareGeneral = async () => {
     if (nextIndex < QUESTIONS.length) {
       setCurrentQuestionIndex(nextIndex);
     } else {
+      // 💡 すべての質問に答え終わったら、結果を計算してリザルトページ（/result）へ飛ばす
       const finalResult = calculateResult(updatedAnswers);
-      setResult(finalResult);
-      setScreen('RESULT');
+      if (finalResult) {
+        const mbtiString = finalResult.mbti.toLowerCase();
+        router.push(`/result?mbti=${mbtiString}`); // 例: /result?mbti=infj
+      }
     }
   };
 
@@ -152,7 +89,7 @@ const handleShareGeneral = async () => {
             {/* 性格一覧ボタン */}
             <div className="mt-4 text-center">
               <Link 
-                href={`/types?from=${result?.mbti?.toLowerCase() || ''}`} 
+                href="/types" 
                 className="text-xs font-black text-slate-500 hover:text-slate-800 underline decoration-2 underline-offset-4"
               >
                 🔍 サンショウウオの性格一覧を見る
@@ -189,7 +126,7 @@ const handleShareGeneral = async () => {
             <div className="space-y-4">
               {QUESTIONS[currentQuestionIndex].options.map((option, index) => (
                 <button
-                  key={`${currentQuestionIndex}-${index}`} // keyを最適化
+                  key={`${currentQuestionIndex}-${index}`}
                   onClick={() => handleAnswer(option.type)}
                   className="w-full text-left bg-white hover:bg-[#EBF7FC] border-4 border-slate-700 rounded-2xl p-5 font-bold transition-all duration-100 shadow-[3px_3px_0px_0px_rgba(51,65,85,1)] hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(51,65,85,1)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[0px_0px_0px_0px_rgba(51,65,85,1)] group"
                 >
@@ -201,106 +138,6 @@ const handleShareGeneral = async () => {
                   </div>
                 </button>
               ))}
-            </div>
-          </div>
-        )}
-
-        {/* 3. 結果画面 */}
-        {screen === 'RESULT' && result && (
-          <div className="bg-white border-4 border-slate-700 rounded-[2.5rem] shadow-[6px_6px_0px_0px_rgba(51,65,85,1)] p-6 sm:p-8 w-full relative">
-            
-            <div className="text-center mb-6">
-              <span className="text-[11px] font-black tracking-wider text-slate-500 bg-slate-100 border-2 border-slate-700 px-3 py-1 rounded-full uppercase">
-                診断結果
-              </span>
-              <div className="text-xs font-mono font-bold text-slate-400 mt-3 tracking-widest">
-                — {result.mbti} TYPE —
-              </div>
-              <h2 className="text-2xl sm:text-3xl font-black text-slate-800 mt-1 mb-3">
-                {result.name}
-              </h2>
-              
-              <div className="px-5 py-2.5 bg-[#FFF9E6] rounded-xl border-2 border-slate-700 shadow-[2px_2px_0px_0px_rgba(51,65,85,1)] inline-block max-w-full">
-                <p className="text-xs sm:text-sm font-black text-amber-900">
-                  「{result.catchphrase}」
-                </p>
-              </div>
-            </div>
-
-            {/* キャラクターイラスト表示エリアの最適化 */}
-            <div className="bg-[#D6F0FC] border-4 border-slate-700 rounded-2xl p-6 text-center mb-6 shadow-inner flex flex-col items-center justify-center min-h-[300px] relative overflow-hidden group">
-              {!imageError ? (
-                <img 
-                  src={`images/salamanders/${result.mbti.toLowerCase()}.png`} // 先頭の / を削除して相対パスに
-                  alt={result.name} 
-                  className="w-100 h-100 object-contain group-hover:scale-105 transition duration-300 drop-shadow-[0_4px_6px_rgba(0,0,0,0.05)]"
-                  onError={() => setImageError(true)}
-                />
-              ) : (
-                <div className="flex flex-col items-center justify-center">
-                  <div className="text-6xl mb-3 animate-pulse select-none">🎨</div>
-                  <p className="font-black text-slate-600 text-sm">イラスト準備中…</p>
-                  <span className="text-[10px] font-mono text-slate-400 bg-white border border-slate-300 px-2 py-0.5 rounded mt-2">
-                    images/salamanders/{result.mbti.toLowerCase()}.png
-                  </span>
-                </div>
-              )}
-            </div>
-
-            {/* 基本の性格 */}
-            <div className="mb-6">
-              <h4 className="text-xs font-black text-slate-400 uppercase tracking-widest mb-2.5">◆ 基本のせいかく</h4>
-              <div className="flex flex-wrap gap-2">
-                {result.personality.map((tag, i) => (
-                  <span 
-                    key={`tag-${i}`}
-                    className="bg-white text-slate-700 px-3 py-1.5 rounded-xl text-xs font-bold border-2 border-slate-700 shadow-[2px_2px_0px_0px_rgba(51,65,85,1)] flex items-center gap-1"
-                  >
-                    <span>🌱</span> {tag}
-                  </span>
-                ))}
-              </div>
-            </div>
-
-            {/* 生態・とくちょう */}
-            <div className="mb-8 bg-[#BCE6F8]/40 rounded-2xl p-5 border-2 border-slate-700 shadow-[2px_2px_0px_0px_rgba(51,65,85,1)]">
-              <h4 className="text-xs font-black text-slate-700 uppercase tracking-widest mb-3 flex items-center gap-1">
-                <span>🍃</span> 生態とシンクロ要素
-              </h4>
-              <ul className="space-y-2 text-slate-600 text-xs sm:text-sm font-bold leading-relaxed">
-                {result.features.map((feature, i) => (
-                  <li key={`feature-${i}`} className="flex items-start">
-                    <span className="text-emerald-600 mr-2 select-none">●</span>
-                    <span className="text-slate-700">{feature}</span>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* ★シェアボタン★ */}
-            <div className="mb-4 relative">
-              <button
-                onClick={handleShareGeneral}
-                className="w-full bg-sky-700 hover:bg-sky-800 text-white font-black py-3.5 px-6 rounded-xl border-4 border-slate-700 shadow-[3px_3px_0px_0px_rgba(51,65,85,1)] transition-all duration-100 hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(51,65,85,1)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[0px_0px_0px_0px_rgba(51,65,85,1)] text-center text-sm flex items-center justify-center gap-2"
-              >
-                <span>📢</span> 結果をシェアする
-              </button>
-            </div>
-
-            {/* アクションボタン */}
-            <div className="pt-2">
-              <button
-                onClick={handleRestart}
-                className="w-full bg-[#BCE6F8] hover:bg-[#99DCFA] text-slate-800 font-black py-3.5 px-6 rounded-xl border-4 border-slate-700 shadow-[3px_3px_0px_0px_rgba(51,65,85,1)] transition-all duration-100 hover:translate-x-[1px] hover:translate-y-[1px] hover:shadow-[2px_2px_0px_0px_rgba(51,65,85,1)] active:translate-x-[3px] active:translate-y-[3px] active:shadow-[0px_0px_0px_0px_rgba(51,65,85,1)] text-center text-sm"
-              >
-                もういちど診断する
-              </button>
-            </div>
-            {/* 性格一覧ボタン */}
-            <div className="mt-4 text-center">
-              <Link href="/types" className="text-xs font-black text-slate-500 hover:text-slate-800 underline decoration-2 underline-offset-4">
-                🔍 サンショウウオの性格一覧を見る
-              </Link>
             </div>
           </div>
         )}

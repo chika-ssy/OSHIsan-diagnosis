@@ -23,9 +23,10 @@ export default function TypesPage() {
 
   const handleBack = () => {
     if (from) {
-      router.push(`/?mbti=${from}`);
+        // 💡 トップではなく、直接そのMBTIの結果ページに戻す
+        router.push(`/result?mbti=${from}`);
     } else {
-      router.push('/');
+        router.push('/');
     }
   };
 
